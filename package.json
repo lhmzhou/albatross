@@ -1,7 +1,8 @@
 {
   "name": "albatross",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "a script to locate expiring secrets in azure",
+  "author": "lhmzhou"
   "main": "check-secrets-expiration.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
