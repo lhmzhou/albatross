@@ -1,4 +1,14 @@
 {
+  "name": "albatross",
+  "version": "1.0.0",
+  "description": "a script to locate expiring secrets in azure",
+  "main": "check-secrets-expiration.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "@azure/identity": "^4.0.0",
     "@azure/keyvault-secrets": "^4.7.0"
