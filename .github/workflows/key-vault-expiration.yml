@@ -4,3 +4,52 @@ name: Check for Expired Secrets
 on:
   schedule:
     - cron: "0 0 1 * *" # UTC time
+  workflow_dispatch:
+      inputs:
+        EXPIRATION_DEADLINE:
+          description: 'days to set as boundary for expiration query. for e.g 90 will find all secrets expiring in 90 days'
+          default: '90'
+          required: false
+        VAULT_NAME:
+          type: string
+          required: false
+        RESOURCE_GROUP:
+          type: string
+          description: 'azure resource group that houses the key vault'
+          required: false
+
+defaults:
+  run:
+    working-directory: albatross/
+
+env:
+  EXPIRATION_DEADLINE: ${{ github.event.inputs.EXPIRATION_DEADLINE || 90 }}
+  VAULT_NAME: ${{ github.event.inputs.VAULT_NAME }}
+  RESOURCE_GROUP:  ${{ github.event.inputs.RESOURCE_GROUP }}
+
+jobs:
+  build:
+    runs-on:  [self-hosted]
+    environment:
+      name: dev
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Output Inputs
+        run: echo "${{ toJSON(github.event.inputs) }}"
+
+      - name: Log in with Azure
+        uses: azure/login@v1
+        with:
+          creds: "${{ secrets.AZURE_CREDENTIALS }}"
+
+      - name: Send Results to Team via Email
+        env:
+          RESULTS: ${{ steps.secret_output.outputs.RESULTS }}
+        with:   
+          username: ${{ vars.EMAIL_ACCOUNT_USERNAME }}
+          password: ${{ secrets.EMAIL_ACCOUNT_PASSWORD }}
+          to: lhmzhou@gmail.com
+          subject: "[Secret Expiration Notification] - ${{ env.RESOURCE_GROUP }} - ${{ env.VAULT_NAME }} Secrets Expiring/Expired in ${{ env.EXPIRATION_DEADLINE }} days"
+          body: ${{ env.RESULTS }}
