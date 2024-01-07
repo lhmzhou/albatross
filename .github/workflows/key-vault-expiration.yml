@@ -1,0 +1,6 @@
+---
+name: Check for Expired Secrets
+
+on:
+  schedule:
+    - cron: "0 0 1 * *" # UTC time
